@@ -15,6 +15,9 @@ def show_attendance_result(df, logs):
         if st.button('Discard', width="stretch"):
             st.session_state.voice_attendance_results = None
             st.session_state.attendance_images = []
+            st.session_state.show_attendance_dialog = False
+            st.session_state.attendance_df = None
+            st.session_state.attendance_logs = None
 
             st.rerun()
 
@@ -25,6 +28,9 @@ def show_attendance_result(df, logs):
                 st.toast("Attendance taken")
                 st.session_state.attendance_images = []
                 st.session_state.voice_attendance_results = None
+                st.session_state.show_attendance_dialog = False
+                st.session_state.attendance_df = None
+                st.session_state.attendance_logs = None
                 st.rerun()
             except Exception as e:
                 st.error('Sync failed!')

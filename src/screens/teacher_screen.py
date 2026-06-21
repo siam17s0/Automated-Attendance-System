@@ -12,7 +12,7 @@ import numpy as np
 from src.database.config import supabase
 from datetime import datetime
 import pandas as pd
-from src.components.dialog_attendance_results import attendance_result_dialog
+from src.components.dialog_attendance_results import attendance_result_dialog,show_attendance_result
 from src.components.dialog_voice_attendance import voice_attendance_dialog
 
 
@@ -84,6 +84,18 @@ def teacher_dashboard():
 
 def teacher_tab_take_attendance():
     teacher_id = st.session_state.teacher_data['teacher_id']
+
+    # session stete initialize
+    if "show_attendance_dialog" not in st.session_state:
+        st.session_state.show_attendance_dialog = False
+
+    if "attendance_df" not in st.session_state:
+        st.session_state.attendance_df = None
+
+    if "attendance_logs" not in st.session_state:
+        st.session_state.attendance_logs = None
+
+
     st.header('Take AI Attendance')
 
     if 'attendance_images' not in st.session_state:
@@ -181,11 +193,20 @@ def teacher_tab_take_attendance():
                             'is_present': bool(is_present)
                         })
 
-                    attendance_result_dialog(pd.DataFrame(results), attendance_to_log)
+                    st.session_state.attendance_df = pd.DataFrame(results)
+                    st.session_state.attendance_logs = attendance_to_log
+                    st.session_state.show_attendance_dialog = True
+                    st.rerun()
 
     with col3:
         if st.button("Use voice  Attendance", type='primary', width='stretch', icon=':material/mic:'):
             voice_attendance_dialog(selected_subject_id)
+    
+    if st.session_state.show_attendance_dialog:
+        attendance_result_dialog(
+            st.session_state.attendance_df,
+            st.session_state.attendance_logs
+        )
 
 
 
